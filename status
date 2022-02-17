@@ -1,0 +1,26 @@
+#! /bin/bash
+
+ping_status () {
+  echo " "$(ping -c 1 8.8.8.8 | grep -Eo 'time=.{4}' | tail -c 5)
+}
+
+kb_layout () {
+  printf " %s" "$(setxkbmap -query | awk '/layout/{print $2}')"
+}
+
+packages () {
+  echo " "$(pacman -Qen | wc -l)
+}
+
+cpu_status () {
+  echo " "$[100-$(vmstat 1 2|tail -1|awk '{print $15}')]"%"
+}
+
+date_time () {
+  echo " "$(date +"%a %b %d - %H:%M")
+}
+
+while true; do
+  xsetroot -name " $(ping_status) $(kb_layout) $(packages) $(cpu_status) $(date_time)"
+  sleep 1
+done
